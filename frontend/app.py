@@ -101,10 +101,11 @@ def check_api_health():
         return False
 
 
-def detect_image(image_bytes: bytes) -> dict:
+def detect_image(image_bytes: bytes, enable_preprocessing: bool = True) -> dict:
     """Send image to API for detection."""
     files = {"file": ("image.jpg", image_bytes, "image/jpeg")}
-    response = requests.post(f"{API_BASE_URL}/api/detect/image", files=files)
+    params = {"enable_preprocessing": enable_preprocessing}
+    response = requests.post(f"{API_BASE_URL}/api/detect/image", files=files, params=params)
     response.raise_for_status()
     return response.json()
 
@@ -308,6 +309,14 @@ def main():
                 image = Image.open(uploaded_image)
                 st.image(image, caption="Ảnh đã upload", use_container_width=True)
                 
+                # Preprocessing toggle
+                enable_preprocess = st.checkbox(
+                    "🔧 Bật tiền xử lý ảnh (Denoise, CLAHE, White Balance)",
+                    value=True,
+                    key="preprocess_toggle",
+                    help="Áp dụng các kỹ thuật xử lý ảnh trước khi detect để cải thiện độ chính xác"
+                )
+                
                 if st.button("🔍 Detect Fire", key="detect_image_btn"):
                     if not check_api_health():
                         st.error("❌ API không khả dụng. Hãy chạy backend server!")
@@ -323,7 +332,7 @@ def main():
                                     image.save(img_bytes, format="JPEG")
                                 img_bytes = img_bytes.getvalue()
                                 
-                                result = detect_image(img_bytes)
+                                result = detect_image(img_bytes, enable_preprocessing=enable_preprocess)
                                 st.session_state["image_result"] = result
                             except Exception as e:
                                 st.error(f"❌ Error: {str(e)}")
