@@ -8,13 +8,15 @@ import cv2
 import numpy as np
 from pathlib import Path
 
-# Get the project root directory
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
+# Get the backend directory (where this service is located)
+BACKEND_DIR = Path(__file__).parent.parent  # backend/
+APP_DIR = BACKEND_DIR.parent  # app/
 
-# Model paths
+# Model paths (relative to app directory)
 MODEL_PATHS = [
-    PROJECT_ROOT / "app" / "weights" / "best.pt",
-    PROJECT_ROOT / "MyFireProject" / "yolo11n_fire_run5" / "weights" / "best.pt",
+    APP_DIR / "weights" / "best.pt",  # app/weights/best.pt (recommended)
+    BACKEND_DIR / "weights" / "best.pt",  # backend/weights/best.pt
+    Path("weights") / "best.pt",  # current working directory
 ]
 
 

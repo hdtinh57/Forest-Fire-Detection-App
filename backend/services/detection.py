@@ -6,13 +6,15 @@ from typing import List, Tuple
 import cv2
 from ultralytics import YOLO
 
-# Get the project root directory
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
+# Get the backend directory (where this service is located)
+BACKEND_DIR = Path(__file__).parent.parent  # backend/
+APP_DIR = BACKEND_DIR.parent  # app/
 
-# Check multiple possible model locations
+# Check multiple possible model locations (relative paths)
 MODEL_PATHS = [
-    PROJECT_ROOT / "app" / "weights" / "best.pt",  # Local app weights
-    PROJECT_ROOT / "MyFireProject" / "yolo11n_fire_run5" / "weights" / "best.pt",  # Original training output
+    APP_DIR / "weights" / "best.pt",  # app/weights/best.pt (recommended)
+    BACKEND_DIR / "weights" / "best.pt",  # backend/weights/best.pt
+    Path("weights") / "best.pt",  # current working directory
 ]
 
 # Find the first existing model path
@@ -21,6 +23,7 @@ for path in MODEL_PATHS:
     if path.exists():
         MODEL_PATH = path
         break
+
 
 
 
